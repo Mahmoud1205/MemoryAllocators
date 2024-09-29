@@ -11,7 +11,7 @@ struct ExampleStruct
 
 using namespace Mem;
 
-i32 main(void)
+int main(void)
 {
 	{ // Stack Allocator Example
 		printf("Stack Allocator Example:\n");
@@ -19,10 +19,10 @@ i32 main(void)
 		StackAllocator stackAllocator{};
 		stackAllocator.Create(SizeKB(1));
 
-		i32* mem1 = (i32*)stackAllocator.Alloc(sizeof(i32));
+		int* mem1 = (int*)stackAllocator.Alloc(sizeof(int));
 		*mem1 = 7;
 
-		f32* mem2 = (f32*)stackAllocator.Alloc(sizeof(f32));
+		float* mem2 = (float*)stackAllocator.Alloc(sizeof(float));
 		*mem2 = 3.14;
 
 		ExampleStruct* mem3 = (ExampleStruct*)stackAllocator.Alloc(sizeof(ExampleStruct));
@@ -43,12 +43,12 @@ i32 main(void)
 		printf("Pool Allocator Example:\n");
 
 		PoolAllocator poolAllocator{};
-		poolAllocator.Create(sizeof(f64), 8);
+		poolAllocator.Create(sizeof(double), 8);
 		poolAllocator.PrintUsage();
 
 		PoolAllocator::Allocation mem1 = poolAllocator.Alloc();
-		*(i32*)mem1.mMemory = 7;
-		printf("mem1 = %i\n", *(i32*)mem1.mMemory);
+		*(int*)mem1.mMemory = 7;
+		printf("mem1 = %i\n", *(int*)mem1.mMemory);
 		poolAllocator.PrintUsage();
 
 		poolAllocator.Free(mem1);
@@ -56,12 +56,12 @@ i32 main(void)
 		poolAllocator.PrintUsage();
 
 		PoolAllocator::Allocation mem2 = poolAllocator.Alloc();
-		*(i32*)mem2.mMemory = 8;
-		printf("mem2 = %i\n", *(i32*)mem2.mMemory);
+		*(int*)mem2.mMemory = 8;
+		printf("mem2 = %i\n", *(int*)mem2.mMemory);
 
 		PoolAllocator::Allocation mem3 = poolAllocator.Alloc();
-		*(i32*)mem3.mMemory = 9;
-		printf("mem3 = %i\n", *(i32*)mem3.mMemory);
+		*(int*)mem3.mMemory = 9;
+		printf("mem3 = %i\n", *(int*)mem3.mMemory);
 		poolAllocator.PrintUsage();
 
 		poolAllocator.Reset();

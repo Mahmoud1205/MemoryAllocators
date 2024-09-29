@@ -4,38 +4,6 @@
 
 namespace Mem
 {
-#pragma region Fixed-length types
-	using i8 = signed char;
-	MA_STATIC_ASSERT(sizeof(i8) == 1, "Expected i8 to be 1 byte.");
-
-	using u8 = unsigned char;
-	MA_STATIC_ASSERT(sizeof(u8) == 1, "Expected u8 to be 1 byte.");
-
-	using u16 = unsigned short int;
-	MA_STATIC_ASSERT(sizeof(u16) == 2, "Expected u16 to be 2 bytes.");
-
-	using i16 = short int;
-	MA_STATIC_ASSERT(sizeof(i16) == 2, "Expected i16 to be 2 bytes.");
-
-	using i32 = int;
-	MA_STATIC_ASSERT(sizeof(i32) == 4, "Expected i32 to be 4 bytes.");
-
-	using u32 = unsigned int;
-	MA_STATIC_ASSERT(sizeof(u32) == 4, "Expected u32 to be 4 bytes.");
-
-	using i64 = long long int;
-	MA_STATIC_ASSERT(sizeof(i64) == 8, "Expected i64 to be 8 bytes.");
-
-	using u64 = unsigned long long int;
-	MA_STATIC_ASSERT(sizeof(u64) == 8, "Expected u64 to be 8 bytes.");
-
-	using f32 = float;
-	MA_STATIC_ASSERT(sizeof(f32) == 4, "Expected f32 to be 4 bytes.");
-
-	using f64 = double;
-	MA_STATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
-#pragma endregion
-
 	constexpr size_t SizeKB(size_t inKB) { return inKB * 1024; }
 	constexpr size_t SizeMB(size_t inMB) { return inMB * 1024 * 1024; }
 	constexpr size_t SizeGB(size_t inGB) { return inGB * 1024 * 1024 * 1024; }
