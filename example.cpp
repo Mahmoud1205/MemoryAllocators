@@ -9,15 +9,22 @@ struct ExampleStruct
 	float mFloat;
 };
 
-using namespace Mem;
+// example error callback
+static void errorCallback(const char* inErrorMessage)
+{
+	fprintf(stderr, inErrorMessage);
+	// c++ exception handling can be added here
+}
 
 int main(void)
 {
+	Mem::errorCallback = &errorCallback;
+
 	{ // Stack Allocator Example
 		printf("Stack Allocator Example:\n");
 
-		StackAllocator stackAllocator{};
-		stackAllocator.Create(SizeKB(1));
+		Mem::StackAllocator stackAllocator{};
+		stackAllocator.Create(Mem::SizeKB(1));
 
 		int* mem1 = (int*)stackAllocator.Alloc(sizeof(int));
 		*mem1 = 7;
@@ -42,11 +49,11 @@ int main(void)
 	{ // Pool Allocator Example
 		printf("Pool Allocator Example:\n");
 
-		PoolAllocator poolAllocator{};
+		Mem::PoolAllocator poolAllocator{};
 		poolAllocator.Create(sizeof(double), 8);
 		poolAllocator.PrintUsage();
 
-		PoolAllocator::Allocation mem1 = poolAllocator.Alloc();
+		Mem::PoolAllocator::Allocation mem1 = poolAllocator.Alloc();
 		*(int*)mem1.mMemory = 7;
 		printf("mem1 = %i\n", *(int*)mem1.mMemory);
 		poolAllocator.PrintUsage();
@@ -55,11 +62,11 @@ int main(void)
 		printf("mem1 freed!\n");
 		poolAllocator.PrintUsage();
 
-		PoolAllocator::Allocation mem2 = poolAllocator.Alloc();
+		Mem::PoolAllocator::Allocation mem2 = poolAllocator.Alloc();
 		*(int*)mem2.mMemory = 8;
 		printf("mem2 = %i\n", *(int*)mem2.mMemory);
 
-		PoolAllocator::Allocation mem3 = poolAllocator.Alloc();
+		Mem::PoolAllocator::Allocation mem3 = poolAllocator.Alloc();
 		*(int*)mem3.mMemory = 9;
 		printf("mem3 = %i\n", *(int*)mem3.mMemory);
 		poolAllocator.PrintUsage();
@@ -70,7 +77,7 @@ int main(void)
 
 		for (size_t i = 0; i < poolAllocator.GetNumMaxElements(); i++)
 		{
-			PoolAllocator::Allocation mem0 = poolAllocator.Alloc();
+			Mem::PoolAllocator::Allocation mem0 = poolAllocator.Alloc();
 		}
 		printf("memory filled!\n");
 		poolAllocator.PrintUsage();

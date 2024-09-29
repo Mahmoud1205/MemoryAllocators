@@ -4,6 +4,10 @@
 
 namespace Mem
 {
+	/// @brief Error callback called by allocators when an error happens. You can add exception handling to this or connect it to your logger.
+	/// @param inErrorMessage A descriptive error message.
+	extern void (*errorCallback)(const char* inErrorMessage);
+
 	constexpr size_t SizeKB(size_t inKB) { return inKB * 1024; }
 	constexpr size_t SizeMB(size_t inMB) { return inMB * 1024 * 1024; }
 	constexpr size_t SizeGB(size_t inGB) { return inGB * 1024 * 1024 * 1024; }

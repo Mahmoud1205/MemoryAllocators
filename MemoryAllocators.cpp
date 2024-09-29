@@ -4,6 +4,8 @@
 #include <string.h>
 #include <cstdio>
 
+void (*Mem::errorCallback)(const char* inErrorMessage) = nullptr;
+
 using namespace Mem;
 
 void StackAllocator::Create(size_t inMaxSize)
@@ -22,7 +24,12 @@ void* StackAllocator::Alloc(size_t inSize)
 {
 	if (mStackPtr + inSize > mMaxSize)
 	{
-		fprintf(stderr, "Stack Allocator Error: Failed to allocate memory, the size of the requested allocation (%zu) is bigger than the remaining size left in the allocator (%zu).\n", inSize, mMaxSize - mStackPtr);
+		if (errorCallback != nullptr)
+		{
+			char errorMessage[512];
+			snprintf(errorMessage, sizeof(errorMessage), "Stack Allocator Error: Failed to allocate memory, the size of the requested allocation (%zu) is bigger than the remaining size left in the allocator (%zu).\n", inSize, mMaxSize - mStackPtr);
+			errorCallback(errorMessage);
+		}
 		return nullptr;
 	}
 
@@ -61,7 +68,12 @@ PoolAllocator::Allocation PoolAllocator::Alloc()
 		}
 	}
 
-	fprintf(stderr, "Pool Allocator Error: Failed to allocate memory, there are no more free cells in the memory pool.\n");
+	if (errorCallback != nullptr)
+	{
+		char errorMessage[256];
+		snprintf(errorMessage, sizeof(errorMessage), "Pool Allocator Error: Failed to allocate memory, there are no more free cells in the memory pool.\n");
+		errorCallback(errorMessage);
+	}
 	// mCellIdx is set to mMaxElements + 1 so the user doesn't accidentally free memory used by another if he doesnt acknowledge that the allocation failed.. this is checked by Free()
 	return Allocation{ nullptr, mMaxElements + 1 };
 }
@@ -70,7 +82,12 @@ void PoolAllocator::Free(const Allocation& inAllocation)
 {
 	if (inAllocation.mCellIdx >= mMaxElements || inAllocation.mMemory == nullptr)
 	{ // the user is trying to free memory that does not exist..
-		fprintf(stderr, "Pool Allocator Error: Failed to free memory, attempted to free memory that does not exist.\n");
+		if (errorCallback != nullptr)
+		{
+			char errorMessage[256];
+			snprintf(errorMessage, sizeof(errorMessage), "Pool Allocator Error: Failed to free memory, attempted to free memory that does not exist.\n");
+			errorCallback(errorMessage);
+		}
 		return;
 	}
 	mCellUsage[inAllocation.mCellIdx] = false;
