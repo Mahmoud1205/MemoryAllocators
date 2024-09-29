@@ -54,8 +54,8 @@ int main(void)
 		poolAllocator.PrintUsage();
 
 		Mem::PoolAllocator::Allocation mem1 = poolAllocator.Alloc();
-		*(int*)mem1.mMemory = 7;
-		printf("mem1 = %i\n", *(int*)mem1.mMemory);
+		*(double*)mem1.mMemory = 7.0;
+		printf("mem1 = %f\n", *(double*)mem1.mMemory);
 		poolAllocator.PrintUsage();
 
 		poolAllocator.Free(mem1);
@@ -63,12 +63,12 @@ int main(void)
 		poolAllocator.PrintUsage();
 
 		Mem::PoolAllocator::Allocation mem2 = poolAllocator.Alloc();
-		*(int*)mem2.mMemory = 8;
-		printf("mem2 = %i\n", *(int*)mem2.mMemory);
+		*(double*)mem2.mMemory = 8.0;
+		printf("mem2 = %f\n", *(double*)mem2.mMemory);
 
 		Mem::PoolAllocator::Allocation mem3 = poolAllocator.Alloc();
-		*(int*)mem3.mMemory = 9;
-		printf("mem3 = %i\n", *(int*)mem3.mMemory);
+		*(double*)mem3.mMemory = 9.0;
+		printf("mem3 = %f\n", *(double*)mem3.mMemory);
 		poolAllocator.PrintUsage();
 
 		poolAllocator.Reset();
