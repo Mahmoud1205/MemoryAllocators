@@ -1,3 +1,3 @@
 # MemoryAllocators
 
-Usage is very easy, see `examples.cpp`.
+Usage is very easy, see `example.cpp`.
