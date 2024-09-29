@@ -8,19 +8,19 @@ void (*Mem::errorCallback)(const char* inErrorMessage) = nullptr;
 
 using namespace Mem;
 
-void StackAllocator::Create(size_t inMaxSize)
+void BumpAllocator::Create(size_t inMaxSize)
 {
 	mMaxSize = inMaxSize;
 	mMemory = (char*)malloc(mMaxSize);
 	Reset();
 }
 
-void StackAllocator::Destroy()
+void BumpAllocator::Destroy()
 {
 	free(mMemory);
 }
 
-void* StackAllocator::Alloc(size_t inSize)
+void* BumpAllocator::Alloc(size_t inSize)
 {
 	if (mStackPtr + inSize > mMaxSize)
 	{
@@ -38,7 +38,7 @@ void* StackAllocator::Alloc(size_t inSize)
 	return requestedMemory;
 }
 
-void StackAllocator::Reset()
+void BumpAllocator::Reset()
 {
 	mStackPtr = 0;
 }

@@ -13,11 +13,11 @@ namespace Mem
 	constexpr size_t SizeGB(size_t inGB) { return inGB * 1024 * 1024 * 1024; }
 
 	/// @brief Very simple stack allocator.
-	class StackAllocator final
+	class BumpAllocator final
 	{
 	public:
-				StackAllocator() = default;
-				~StackAllocator() = default;
+				BumpAllocator() = default;
+				~BumpAllocator() = default;
 
 		/// @brief Creates the allocator to be used.
 		/// @param inMaxSize The maximum size in bytes to be used by the allocator. Use the Mem::SizeKB/MB/GB() functions to get bytes from other units.
@@ -45,7 +45,7 @@ namespace Mem
 	};
 
 	/// @brief Pool allocator.
-	class PoolAllocator
+	class PoolAllocator final
 	{
 	public:
 					PoolAllocator() = default;

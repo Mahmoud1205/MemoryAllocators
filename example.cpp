@@ -20,29 +20,29 @@ int main(void)
 {
 	Mem::errorCallback = &errorCallback;
 
-	{ // Stack Allocator Example
-		printf("Stack Allocator Example:\n");
+	{ // Bump Allocator Example
+		printf("Bump Allocator Example:\n");
 
-		Mem::StackAllocator stackAllocator{};
-		stackAllocator.Create(Mem::SizeKB(1));
+		Mem::BumpAllocator bumpAllocator{};
+		bumpAllocator.Create(Mem::SizeKB(1));
 
-		int* mem1 = (int*)stackAllocator.Alloc(sizeof(int));
+		int* mem1 = (int*)bumpAllocator.Alloc(sizeof(int));
 		*mem1 = 7;
 
-		float* mem2 = (float*)stackAllocator.Alloc(sizeof(float));
+		float* mem2 = (float*)bumpAllocator.Alloc(sizeof(float));
 		*mem2 = 3.14;
 
-		ExampleStruct* mem3 = (ExampleStruct*)stackAllocator.Alloc(sizeof(ExampleStruct));
+		ExampleStruct* mem3 = (ExampleStruct*)bumpAllocator.Alloc(sizeof(ExampleStruct));
 		*mem3 = ExampleStruct{7, 1.0f};
 
 		printf("mem1 = %i\n", *mem1);
 		printf("mem2 = %f\n", *mem2);
 		printf("mem3->mCount = %u\n", mem3->mCount);
 		printf("mem3->mFloat = %f\n", mem3->mFloat);
-		printf("%zu bytes left.\n", stackAllocator.GetRemainingBytes());
+		printf("%zu bytes left.\n", bumpAllocator.GetRemainingBytes());
 
-		stackAllocator.Reset();
-		stackAllocator.Destroy();
+		bumpAllocator.Reset();
+		bumpAllocator.Destroy();
 		putchar('\n');
 	}
 
