@@ -47,24 +47,25 @@ void PoolAllocator::Create(size_t inElementSize, size_t inMaxElements)
 {
 	mElementSize = inElementSize;
 	mMaxElements = inMaxElements;
-	mCellUsage = (bool*)malloc(mMaxElements);
-	mMemory = (char*)malloc(mElementSize * mMaxElements);
+	mAllocations = (allocation_t*)malloc(mMaxElements * sizeof(*mAllocations));
+	for (size_t i = 0; i < mMaxElements; i++)
+		mAllocations[i].mMemory = malloc(mElementSize);
 	Reset();
 }
 
 void PoolAllocator::Destroy()
 {
-	free(mMemory);
+	free(mAllocations);
 }
 
-PoolAllocator::Allocation PoolAllocator::Alloc()
+void* PoolAllocator::Alloc()
 {
 	for (size_t i = 0; i < mMaxElements; i++)
 	{
-		if (mCellUsage[i] == false) 
+		if (!mAllocations[i].mIsUsed)
 		{
-			mCellUsage[i] = true;
-			return Allocation{ mMemory + (mElementSize * i), i };
+			mAllocations[i].mIsUsed = true;
+			return mAllocations[i].mMemory;
 		}
 	}
 
@@ -74,35 +75,27 @@ PoolAllocator::Allocation PoolAllocator::Alloc()
 		snprintf(errorMessage, sizeof(errorMessage), "Pool Allocator Error: Failed to allocate memory, there are no more free cells in the memory pool.\n");
 		errorCallback(errorMessage);
 	}
-	// mCellIdx is set to mMaxElements + 1 so the user doesn't accidentally free memory used by another if he doesnt acknowledge that the allocation failed.. this is checked by Free()
-	return Allocation{ nullptr, mMaxElements + 1 };
+	return nullptr;
 }
 
-void PoolAllocator::Free(const Allocation& inAllocation)
+void PoolAllocator::Free(void* inMemory)
 {
-	if (inAllocation.mCellIdx >= mMaxElements || inAllocation.mMemory == nullptr)
-	{ // the user is trying to free memory that does not exist..
-		if (errorCallback != nullptr)
-		{
-			char errorMessage[256];
-			snprintf(errorMessage, sizeof(errorMessage), "Pool Allocator Error: Failed to free memory, attempted to free memory that does not exist.\n");
-			errorCallback(errorMessage);
-		}
-		return;
-	}
-	mCellUsage[inAllocation.mCellIdx] = false;
+	for (size_t i = 0; i < mMaxElements; i++)
+		if (mAllocations[i].mMemory == inMemory)
+			mAllocations[i].mIsUsed = false;
 }
 
 void PoolAllocator::Reset()
 {
-	memset(mCellUsage, false, mMaxElements);
+	for (size_t i = 0; i < mMaxElements; i++)
+		mAllocations[i].mIsUsed = false;
 }
 
 size_t PoolAllocator::GetNumFreeCells() const
 {
 	size_t numRemainingElements = 0;
 	for (size_t i = 0; i < mMaxElements; i++)
-		if (mCellUsage[i] == 0)
+		if (mAllocations[i].mIsUsed == 0)
 			numRemainingElements++;
 
 	return numRemainingElements;
@@ -111,7 +104,7 @@ size_t PoolAllocator::GetNumFreeCells() const
 bool PoolAllocator::IsFull() const
 {
 	for (size_t i = 0; i < mMaxElements; i++)
-		if (mCellUsage[i] == 0)
+		if (mAllocations[i].mIsUsed == 0)
 			return false;
 
 	return true;
@@ -121,6 +114,6 @@ void PoolAllocator::PrintUsage() const
 {
 	printf("Memory Pool Usage: [");
 	for (size_t i = 0; i < mMaxElements; i++)
-		printf("%s", mCellUsage[i] == true ? "#" : ".");
+		printf("%s", mAllocations[i].mIsUsed == true ? "#" : ".");
 	printf("]\n");
 }
