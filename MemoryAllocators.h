@@ -1,7 +1,5 @@
 #pragma once
 
-#define MA_STATIC_ASSERT static_assert
-
 namespace Mem
 {
 	/// @brief Error callback called by allocators when an error happens. You can add exception handling to this or connect it to your logger.
