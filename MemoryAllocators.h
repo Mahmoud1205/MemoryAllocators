@@ -75,6 +75,10 @@ namespace Mem
 		/// @brief Prints the usage of the pool allocator. '#' is used and '.' is unused.
 		void		PrintUsage() const;
 
+		void*		operator[](size_t index) {
+			return mAllocations[index].mMemory;
+		}
+
 	private:
 		struct allocation_t {
 			void* mMemory;
