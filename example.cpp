@@ -53,22 +53,22 @@ int main(void)
 		poolAllocator.Create(sizeof(double), 8);
 		poolAllocator.PrintUsage();
 
-		double* mem1 = (double*)poolAllocator.Alloc();
-		*mem1 = 7.0;
-		printf("mem1 = %f\n", *mem1);
+		Mem::PoolAllocator::Allocation mem1 = poolAllocator.Alloc();
+		*(double*)mem1.mMemory = 7.0;
+		printf("mem1 = %f\n", *(double*)mem1.mMemory);
 		poolAllocator.PrintUsage();
 
 		poolAllocator.Free(mem1);
 		printf("mem1 freed!\n");
 		poolAllocator.PrintUsage();
 
-		double* mem2 = (double*)poolAllocator.Alloc();
-		*mem2 = 8.0;
-		printf("mem2 = %f\n", *mem2);
+		Mem::PoolAllocator::Allocation mem2 = poolAllocator.Alloc();
+		*(double*)mem2.mMemory = 8.0;
+		printf("mem2 = %f\n", *(double*)mem2.mMemory);
 
-		double* mem3 = (double*)poolAllocator.Alloc();
-		*mem3 = 9.0;
-		printf("mem3 = %f\n", *mem3);
+		Mem::PoolAllocator::Allocation mem3 = poolAllocator.Alloc();
+		*(double*)mem3.mMemory = 9.0;
+		printf("mem3 = %f\n", *(double*)mem3.mMemory);
 		poolAllocator.PrintUsage();
 
 		poolAllocator.Reset();
@@ -77,7 +77,7 @@ int main(void)
 
 		for (size_t i = 0; i < poolAllocator.GetNumMaxElements(); i++)
 		{
-			void* mem0 = poolAllocator.Alloc();
+			Mem::PoolAllocator::Allocation mem0 = poolAllocator.Alloc();
 		}
 		printf("memory filled!\n");
 		poolAllocator.PrintUsage();

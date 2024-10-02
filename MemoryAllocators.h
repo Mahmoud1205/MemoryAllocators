@@ -49,6 +49,15 @@ namespace Mem
 					PoolAllocator() = default;
 					~PoolAllocator() = default;
 
+		/// @brief A memory allocation gotten from Alloc(), do not make this directly.
+		struct Allocation
+		{
+			/// @brief The memory block you requested.
+			void*	mMemory;
+			/// @brief The index of the cell you were given, do not edit this, it is used by Free().
+			size_t	mCellIdx;
+		};
+
 		/// @brief Creates the allocator to be used.
 		/// @param inElementSize The size of each element that will be allocated.
 		/// @param inMaxElements The number of elements to be allocated.
@@ -56,11 +65,11 @@ namespace Mem
 		/// @brief Destroys the allocator and frees all of it's memory.
 		void		Destroy();
 		/// @brief Requests a block of memory to be allocated.
-		/// @return Pointer to the block.
-		void*		Alloc();
+		/// @return See documentation for PoolAllocator::Allocation.
+		Allocation	Alloc();
 		/// @brief Frees an allocation.
-		/// @param inMemory The block of memory to be freed.
-		void		Free(void* inMemory);
+		/// @param inAllocation The allocation to be freed.
+		void		Free(const Allocation& inAllocation);
 		/// @brief Frees all allocations.
 		void		Reset();
 
@@ -80,12 +89,8 @@ namespace Mem
 		}
 
 	private:
-		struct allocation_t {
-			void* mMemory;
-			bool mIsUsed;
-			char mPadding[7];
-		} *mAllocations;
-
+		char*		mMemory;
+		bool*		mCellUsage; // TODO: change to bitset
 		size_t		mElementSize;
 		size_t		mMaxElements;
 	};
