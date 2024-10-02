@@ -47,7 +47,7 @@ namespace Mem
 	{
 	public:
 					PoolAllocator() = default;
-					~PoolAllocator() = default;
+					~PoolAllocator();
 
 		/// @brief A memory allocation gotten from Alloc(), do not make this directly.
 		struct Allocation
@@ -84,13 +84,9 @@ namespace Mem
 		/// @brief Prints the usage of the pool allocator. '#' is used and '.' is unused.
 		void		PrintUsage() const;
 
-		void*		operator[](size_t index) {
-			return mAllocations[index].mMemory;
-		}
-
 	private:
-		char*		mMemory;
-		bool*		mCellUsage; // TODO: change to bitset
+		char*		mMemory = nullptr;
+		bool*		mCellUsage = nullptr; // TODO: change to bitset
 		size_t		mElementSize;
 		size_t		mMaxElements;
 	};

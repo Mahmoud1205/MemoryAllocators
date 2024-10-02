@@ -27,7 +27,7 @@ void* BumpAllocator::Alloc(size_t inSize)
 		if (errorCallback != nullptr)
 		{
 			char errorMessage[512];
-			snprintf(errorMessage, sizeof(errorMessage), "Stack Allocator Error: Failed to allocate memory, the size of the requested allocation (%zu) is bigger than the remaining size left in the allocator (%zu).\n", inSize, mMaxSize - mStackPtr);
+			snprintf(errorMessage, sizeof(errorMessage), "Bump Allocator Error: Failed to allocate memory, the size of the requested allocation (%zu) is bigger than the remaining size left in the allocator (%zu).\n", inSize, mMaxSize - mStackPtr);
 			errorCallback(errorMessage);
 		}
 		return nullptr;
@@ -45,6 +45,15 @@ void BumpAllocator::Reset()
 
 void PoolAllocator::Create(size_t inElementSize, size_t inMaxElements)
 {
+	if (mMemory == nullptr)
+	{
+		if (errorCallback != nullptr)
+		{
+			errorCallback("Pool Allocator Error: Failed to create memory pool, a memory pool has already been created.");
+		}
+		return;
+	}
+
 	mElementSize = inElementSize;
 	mMaxElements = inMaxElements;
 	mCellUsage = (bool*)malloc(mMaxElements);
@@ -55,6 +64,12 @@ void PoolAllocator::Create(size_t inElementSize, size_t inMaxElements)
 void PoolAllocator::Destroy()
 {
 	free(mMemory);
+	free(mCellUsage);
+}
+
+PoolAllocator::~PoolAllocator()
+{
+	Destroy();
 }
 
 PoolAllocator::Allocation PoolAllocator::Alloc()
@@ -69,11 +84,8 @@ PoolAllocator::Allocation PoolAllocator::Alloc()
 	}
 
 	if (errorCallback != nullptr)
-	{
-		char errorMessage[256];
-		snprintf(errorMessage, sizeof(errorMessage), "Pool Allocator Error: Failed to allocate memory, there are no more free cells in the memory pool.\n");
-		errorCallback(errorMessage);
-	}
+		errorCallback("Pool Allocator Error: Failed to allocate memory, there are no more free cells in the memory pool.\n");
+
 	// mCellIdx is set to mMaxElements + 1 so the user doesn't accidentally free memory used by another if he doesnt acknowledge that the allocation failed.. this is checked by Free()
 	return Allocation{ nullptr, mMaxElements + 1 };
 }
@@ -84,9 +96,7 @@ void PoolAllocator::Free(const Allocation& inAllocation)
 	{ // the user is trying to free memory that does not exist..
 		if (errorCallback != nullptr)
 		{
-			char errorMessage[256];
-			snprintf(errorMessage, sizeof(errorMessage), "Pool Allocator Error: Failed to free memory, attempted to free memory that does not exist.\n");
-			errorCallback(errorMessage);
+			errorCallback("Pool Allocator Error: Failed to free memory, attempted to free memory that does not exist.\n");
 		}
 		return;
 	}
